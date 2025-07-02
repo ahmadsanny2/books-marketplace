@@ -116,7 +116,7 @@ export default function HomePage() {
             <div className="relative">
               <div className="relative z-10">
                 <Image
-                  src="/placeholder.svg?height=600&width=500"
+                  src="/coverFullNightStalkerss.jpg"
                   alt="Stack of books"
                   width={500}
                   height={600}
