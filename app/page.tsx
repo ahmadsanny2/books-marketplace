@@ -184,9 +184,9 @@ export default function HomePage() {
                   <Image
                     src={book.image}
                     alt={book.title}
-                    width={200}
-                    height={400}
-                    className="object-cover h-[30rem] w-full group-hover:scale-105 transition-transform duration-300"
+                    width={0}
+                    height={0}
+                    className="h-[500px] w-full group-hover:scale-105 transition-transform duration-300"
                   />
                   {book.bestseller && (
                     <Badge className="absolute top-3 left-3 bg-red-500 hover:bg-red-600">Bestseller</Badge>
