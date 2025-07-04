@@ -8,26 +8,26 @@ import { Star, ShoppingCart, BookOpen, Users, Award } from "lucide-react"
 const featuredBooks = [
   {
     id: 1,
-    title: "The Great Gatsby",
-    author: "F. Scott Fitzgerald",
+    title: "Night Stalkers",
+    author: "Risyad Farizi",
     price: 15.99,
     originalPrice: 19.99,
     rating: 4.8,
     reviews: 1234,
-    image: "/placeholder.svg?height=300&width=200",
-    category: "Classic Literature",
+    image: "/coverFullNightStalkerss.jpg",
+    category: "Horror Mistery",
     bestseller: true,
   },
   {
     id: 2,
-    title: "To Kill a Mockingbird",
-    author: "Harper Lee",
+    title: "Ketika Bom Menyulut Cinta",
+    author: "Risyad Farizi",
     price: 12.99,
     originalPrice: 16.99,
     rating: 4.9,
     reviews: 2156,
-    image: "/placeholder.svg?height=300&width=200",
-    category: "Fiction",
+    image: "/coverDepanKetikaBomMenyulutCinta.png",
+    category: "Thriller Romance",
     bestseller: false,
   },
   {
@@ -182,11 +182,11 @@ export default function HomePage() {
               >
                 <div className="relative">
                   <Image
-                    src={book.image || "/placeholder.svg"}
+                    src={book.image}
                     alt={book.title}
                     width={200}
-                    height={300}
-                    className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                    height={400}
+                    className="object-cover h-[30rem] w-full group-hover:scale-105 transition-transform duration-300"
                   />
                   {book.bestseller && (
                     <Badge className="absolute top-3 left-3 bg-red-500 hover:bg-red-600">Bestseller</Badge>
