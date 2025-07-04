@@ -1,6 +1,6 @@
 {
-  "name": "SANS PEDIA",
-  "short_name": "SANS PEDIA",
+  "name": "Books Store",
+  "short_name": "Books Store",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",

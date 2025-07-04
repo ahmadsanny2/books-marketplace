@@ -8,7 +8,7 @@ import { Footer } from "@/components/footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "BookStore - Marketplace Buku Terlengkap",
+  title: "Book Store - Marketplace Buku Terlengkap",
   description:
     "Temukan dan beli buku favorit Anda dari koleksi terlengkap dengan harga terbaik",
   generator: "v0.dev",
