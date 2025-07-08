@@ -1,71 +1,93 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Star, ShoppingCart, BookOpen, Users, Award } from "lucide-react"
+import { supabase } from "@/lib/supabaseClient"
 
-const featuredBooks = [
-  {
-    id: 1,
-    title: "Night Stalkers",
-    author: "Risyad Farizi",
-    price: 15.99,
-    originalPrice: 19.99,
-    rating: 4.8,
-    reviews: 1234,
-    image: "/coverFullNightStalkerss.jpg",
-    category: "Horror Mistery",
-    bestseller: true,
-  },
-  {
-    id: 2,
-    title: "Ketika Bom Menyulut Cinta",
-    author: "Risyad Farizi",
-    price: 12.99,
-    originalPrice: 16.99,
-    rating: 4.9,
-    reviews: 2156,
-    image: "/coverDepanKetikaBomMenyulutCinta.png",
-    category: "Thriller Romance",
-    bestseller: false,
-  },
-  {
-    id: 3,
-    title: "1984",
-    author: "George Orwell",
-    price: 13.99,
-    originalPrice: 17.99,
-    rating: 4.7,
-    reviews: 3421,
-    image: "/placeholder.svg?height=300&width=200",
-    category: "Dystopian Fiction",
-    bestseller: true,
-  },
-  {
-    id: 4,
-    title: "Pride and Prejudice",
-    author: "Jane Austen",
-    price: 11.99,
-    originalPrice: 15.99,
-    rating: 4.6,
-    reviews: 1876,
-    image: "/placeholder.svg?height=300&width=200",
-    category: "Romance",
-    bestseller: false,
-  },
-]
-
-const categories = [
-  { name: "Fiction", count: 1250, icon: BookOpen },
-  { name: "Non-Fiction", count: 890, icon: Users },
-  { name: "Science", count: 567, icon: Award },
-  { name: "History", count: 432, icon: BookOpen },
-  { name: "Biography", count: 321, icon: Users },
-  { name: "Children", count: 654, icon: Award },
-]
+type Book = {
+  id: string
+  title: string
+  author: string
+  price: number
+  original_price: number
+  rating: number
+  reviews: number
+  image: string
+  category: string
+  bestseller: boolean
+}
 
 export default function HomePage() {
+  const [bestsellerBooks, setBestsellerBooks] = useState<Book[]>([])
+  const [loading, setLoading] = useState(true)
+  const [categoriesFromBooks, setCategoriesFromBooks] = useState<
+    { name: string; count: number }[]
+  >([])
+
+
+  useEffect(() => {
+    const fetchBestsellerBooks = async () => {
+      const { data, error } = await supabase
+        .from("books")
+        .select("*")
+        .eq("bestseller", true)
+        .limit(4)
+
+      if (error) {
+        console.error("Gagal mengambil data:", error)
+      } else {
+        setBestsellerBooks(data as Book[])
+      }
+      setLoading(false)
+    }
+
+    fetchBestsellerBooks()
+  }, [])
+
+
+  useEffect(() => {
+    const fetchBestsellerBooks = async () => {
+      const { data, error } = await supabase
+        .from("books")
+        .select("*")
+
+      if (error) {
+        console.error("Gagal mengambil data:", error)
+      } else {
+        setBestsellerBooks(data as Book[])
+
+        // Dapatkan kategori unik dan jumlah buku di setiap kategori
+        const groupedCategories = (data as Book[]).reduce((acc, book) => {
+          const categoryName = book.category || "Uncategorized"
+          if (!acc[categoryName]) {
+            acc[categoryName] = 1
+          } else {
+            acc[categoryName] += 1
+          }
+          return acc
+        }, {} as Record<string, number>)
+
+        // Ubah ke array dan simpan di state
+        const categoryArray = Object.entries(groupedCategories).map(([name, count]) => ({
+          name,
+          count
+        }))
+        setCategoriesFromBooks(categoryArray)
+
+      }
+      setLoading(false)
+    }
+
+    fetchBestsellerBooks()
+  }, [])
+
+
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       {/* Hero Section */}
@@ -139,8 +161,7 @@ export default function HomePage() {
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {categories.map((category, index) => {
-              const Icon = category.icon
+            {categoriesFromBooks.map((category, index) => {
               return (
                 <Card
                   key={index}
@@ -148,7 +169,7 @@ export default function HomePage() {
                 >
                   <CardContent className="p-6 text-center">
                     <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-amber-100 transition-colors">
-                      <Icon className="h-6 w-6 text-slate-600 group-hover:text-amber-600" />
+                      {/* <Icon className="h-6 w-6 text-slate-600 group-hover:text-amber-600" /> */}
                     </div>
                     <h3 className="font-semibold text-slate-900 mb-1">{category.name}</h3>
                     <p className="text-sm text-slate-500">{category.count} buku</p>
@@ -174,62 +195,72 @@ export default function HomePage() {
               </Button>
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredBooks.map((book) => (
-              <Card
-                key={book.id}
-                className="group hover:shadow-xl transition-all duration-300 border-0 bg-white overflow-hidden"
-              >
-                <div className="relative">
-                  <Image
-                    src={book.image}
-                    alt={book.title}
-                    width={0}
-                    height={0}
-                    className="h-[500px] w-full group-hover:scale-105 transition-transform duration-300"
-                  />
-                  {book.bestseller && (
-                    <Badge className="absolute top-3 left-3 bg-red-500 hover:bg-red-600">Bestseller</Badge>
-                  )}
-                  <Button
-                    size="sm"
-                    className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity bg-white text-slate-900 hover:bg-slate-100"
-                  >
-                    <ShoppingCart className="h-4 w-4" />
-                  </Button>
-                </div>
-                <CardContent className="p-6">
-                  <div className="space-y-3">
-                    <Badge variant="secondary" className="text-xs">
-                      {book.category}
+
+          {loading ? (
+            <p className="text-slate-500">Memuat buku bestseller...</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {bestsellerBooks.map((book) => (
+                <Card
+                  key={book.id}
+                  className="group hover:shadow-xl transition-all duration-300 border-0 bg-white overflow-hidden"
+                >
+                  <div className="relative">
+                    <Image
+                      src={book.image || "/placeholder.svg"}
+                      alt={book.title}
+                      width={0}
+                      height={0}
+                      className="h-[500px] w-full group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <Badge className="absolute top-3 left-3 bg-red-500 hover:bg-red-600">
+                      Bestseller
                     </Badge>
-                    <div>
-                      <h3 className="font-semibold text-slate-900 line-clamp-2 group-hover:text-amber-600 transition-colors">
-                        {book.title}
-                      </h3>
-                      <p className="text-sm text-slate-600 mt-1">{book.author}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center">
-                        <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                        <span className="text-sm font-medium ml-1">{book.rating}</span>
-                      </div>
-                      <span className="text-xs text-slate-500">({book.reviews} ulasan)</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg font-bold text-slate-900">${book.price}</span>
-                        <span className="text-sm text-slate-500 line-through">${book.originalPrice}</span>
-                      </div>
-                      <Button size="sm" className="bg-amber-500 hover:bg-amber-600 text-amber-900">
-                        Beli
-                      </Button>
-                    </div>
+                    <Button
+                      size="sm"
+                      className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity bg-white text-slate-900 hover:bg-slate-100"
+                    >
+                      <ShoppingCart className="h-4 w-4" />
+                    </Button>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  <CardContent className="p-6">
+                    <div className="space-y-3">
+                      <Badge variant="secondary" className="text-xs">
+                        {book.category}
+                      </Badge>
+                      <div>
+                        <h3 className="font-semibold text-slate-900 line-clamp-2 group-hover:text-amber-600 transition-colors">
+                          {book.title}
+                        </h3>
+                        <p className="text-sm text-slate-600 mt-1">{book.author}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center">
+                          <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                          <span className="text-sm font-medium ml-1">{book.rating}</span>
+                        </div>
+                        <span className="text-xs text-slate-500">({book.reviews} ulasan)</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg font-bold text-slate-900">
+                            ${book.price}
+                          </span>
+                          <span className="text-sm text-slate-500 line-through">
+                            ${book.original_price}
+                          </span>
+                        </div>
+                        <Button size="sm" className="bg-amber-500 hover:bg-amber-600 text-amber-900">
+                          Beli
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+
           <div className="text-center mt-8 sm:hidden">
             <Link href="/books">
               <Button variant="outline">Lihat Semua Buku</Button>

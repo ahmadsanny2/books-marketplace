@@ -1,16 +1,30 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { BookOpen, Search, ShoppingCart, User, Menu, Heart, Bell } from "lucide-react"
+import { useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  BookOpen,
+  Search,
+  ShoppingCart,
+  User,
+  Menu,
+  Heart,
+  Bell,
+} from "lucide-react";
 
 export function Navbar() {
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("")
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
@@ -26,7 +40,10 @@ export function Navbar() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="text-slate-700 hover:text-amber-600 font-medium transition-colors">
+            <Link
+              href="/"
+              className="text-slate-700 hover:text-amber-600 font-medium transition-colors"
+            >
               Beranda
             </Link>
             <DropdownMenu>
@@ -42,13 +59,22 @@ export function Navbar() {
                 <DropdownMenuItem>Children</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Link href="/books" className="text-slate-700 hover:text-amber-600 font-medium transition-colors">
+            <Link
+              href="/all-books"
+              className="text-slate-700 hover:text-amber-600 font-medium transition-colors"
+            >
               Semua Buku
             </Link>
-            <Link href="/bestsellers" className="text-slate-700 hover:text-amber-600 font-medium transition-colors">
-              Bestseller
+            <Link
+              href="/best-seller"
+              className="text-slate-700 hover:text-amber-600 font-medium transition-colors"
+            >
+              Best Seller
             </Link>
-            <Link href="/about" className="text-slate-700 hover:text-amber-600 font-medium transition-colors">
+            <Link
+              href="/about"
+              className="text-slate-700 hover:text-amber-600 font-medium transition-colors"
+            >
               Tentang
             </Link>
           </nav>
@@ -57,19 +83,38 @@ export function Navbar() {
           <div className="hidden lg:flex items-center flex-1 max-w-sm mx-8">
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
-              <Input placeholder="Cari buku, penulis, atau kategori..." className="pl-10 pr-4 w-full" />
+              <form onSubmit={(e) => {
+                e.preventDefault()
+                window.location.href = `/all-books?q=${encodeURIComponent(searchTerm)}`
+              }}>
+                <Input
+                  placeholder="Cari buku, penulis, atau kategori..."
+                  className="pl-10 pr-4 w-full"
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={searchTerm}
+                />
+              </form>
             </div>
           </div>
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-4">
             {/* Search Button - Mobile */}
-            <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setIsSearchOpen(!isSearchOpen)}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden"
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
+            >
               <Search className="h-5 w-5" />
             </Button>
 
             {/* Wishlist */}
-            <Button variant="ghost" size="icon" className="hidden sm:flex relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hidden sm:flex relative"
+            >
               <Heart className="h-5 w-5" />
               <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-red-500">
                 3
@@ -77,7 +122,11 @@ export function Navbar() {
             </Button>
 
             {/* Notifications */}
-            <Button variant="ghost" size="icon" className="hidden sm:flex relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hidden sm:flex relative"
+            >
               <Bell className="h-5 w-5" />
               <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs bg-amber-500">
                 2
@@ -105,6 +154,9 @@ export function Navbar() {
                 <DropdownMenuItem>Wishlist</DropdownMenuItem>
                 <DropdownMenuItem>Pengaturan</DropdownMenuItem>
                 <DropdownMenuItem>Keluar</DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/admin/dashboard">Admin</Link>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -120,25 +172,37 @@ export function Navbar() {
                   <Link href="/" className="text-lg font-medium">
                     Beranda
                   </Link>
-                  <Link href="/books" className="text-lg font-medium">
+                  <Link href="/all-books" className="text-lg font-medium">
                     Semua Buku
                   </Link>
-                  <Link href="/bestsellers" className="text-lg font-medium">
-                    Bestseller
+                  <Link href="/best-sellers" className="text-lg font-medium">
+                    Best Seller
                   </Link>
                   <div className="space-y-2">
                     <p className="text-lg font-medium">Kategori</p>
                     <div className="pl-4 space-y-2">
-                      <Link href="/category/fiction" className="block text-slate-600">
+                      <Link
+                        href="/category/fiction"
+                        className="block text-slate-600"
+                      >
                         Fiction
                       </Link>
-                      <Link href="/category/non-fiction" className="block text-slate-600">
+                      <Link
+                        href="/category/non-fiction"
+                        className="block text-slate-600"
+                      >
                         Non-Fiction
                       </Link>
-                      <Link href="/category/science" className="block text-slate-600">
+                      <Link
+                        href="/category/science"
+                        className="block text-slate-600"
+                      >
                         Science
                       </Link>
-                      <Link href="/category/history" className="block text-slate-600">
+                      <Link
+                        href="/category/history"
+                        className="block text-slate-600"
+                      >
                         History
                       </Link>
                     </div>
@@ -147,7 +211,10 @@ export function Navbar() {
                     Tentang
                   </Link>
                   <div className="pt-4 border-t">
-                    <Link href="/wishlist" className="block text-slate-600 mb-2">
+                    <Link
+                      href="/wishlist"
+                      className="block text-slate-600 mb-2"
+                    >
                       Wishlist
                     </Link>
                     <Link href="/profile" className="block text-slate-600 mb-2">
@@ -168,11 +235,14 @@ export function Navbar() {
           <div className="lg:hidden py-4 border-t">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
-              <Input placeholder="Cari buku, penulis, atau kategori..." className="pl-10 pr-4 w-full" />
+              <Input
+                placeholder="Cari buku, penulis, atau kategori..."
+                className="pl-10 pr-4 w-full"
+              />
             </div>
           </div>
         )}
       </div>
     </header>
-  )
+  );
 }
