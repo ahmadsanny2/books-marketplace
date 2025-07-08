@@ -1,4 +1,6 @@
-import React, { ReactNode } from "react";
+"use client"
+
+import React, { ReactNode, useState } from "react";
 import Link from "next/link";
 
 interface AdminLayoutProps {
@@ -6,12 +8,17 @@ interface AdminLayoutProps {
 }
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
+  const [aside, setAside] = useState(false)
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
-      <aside className="w-64 bg-white shadow px-6 py-8">
-        <h2 className="text-xl font-bold mb-8">Admin Panel</h2>
-        <nav className="space-y-4">
+      <aside className={` bg-white shadow px-2 lg:px-6 py-8 ${(aside) ? "max-lg:fixed max-lg:z-50 max-lg:h-full" : ""}`}>
+        <div className="flex justify-between">
+          <h2 className={`text-xl font-bold mb-8 ${(aside) ? "" : "max-lg:hidden"}`}>Admin Panel</h2>
+          <div className="hidden max-lg:block cursor-pointer text-2xl" onClick={() => setAside(!aside)}>{aside ? "<" : ">"}</div>
+        </div>
+        <nav className={`space-y-4 ${(aside) ? "fixed h-full" : "max-lg:hidden"}`}>
           <Link href="/admin/dashboard" className="block text-gray-700 font-medium">
             Dashboard
           </Link>
@@ -25,6 +32,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             Pengaturan
           </Link>
         </nav>
+
       </aside>
 
       {/* Halaman */}

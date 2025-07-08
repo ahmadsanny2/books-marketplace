@@ -37,6 +37,7 @@ export default function HomePage() {
         .select("*")
         .eq("bestseller", true)
         .limit(4)
+        .order("id", { ascending: true })
 
       if (error) {
         console.error("Gagal mengambil data:", error)

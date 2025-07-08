@@ -1,9 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import AdminLayout from "@/components/layouts/AdminLayout";
+import { PencilIcon, Trash } from "lucide-react";
+
 
 type Book = {
   id: string;
@@ -111,19 +116,19 @@ export default function ProductsPage() {
     <AdminLayout>
 
 
-      <div className="p-6">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-6">
+      <div className="lg:p-6">
+        <div className="container mx-auto px-2 lg:px-4">
+          <div className="lg:flex justify-between items-center lg:mb-6">
             <h1 className="text-2xl font-bold">Manajemen Produk</h1>
-            <Button onClick={handleAdd}>+ Tambah Produk</Button>
+            <Button className="my-2" onClick={handleAdd}>+ Tambah Produk</Button>
           </div>
 
           {isLoading ? (
             <p className="text-gray-500">Memuat data buku...</p>
           ) : (
-            <div className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-5">
               {books.map((book) => (
-                <div key={book.id} className="p-4 border rounded shadow">
+                <div key={book.id} className="">
                   {isEditing === book.id ? (
                     <div className="space-y-2">
                       <input
@@ -165,22 +170,62 @@ export default function ProductsPage() {
                       <Button onClick={handleSave}>Simpan</Button>
                     </div>
                   ) : (
-                    <>
-                      <h2 className="font-semibold text-lg">{book.title}</h2>
-                      <p className="text-sm text-gray-600">{book.author}</p>
-                      <div className="flex space-x-2 mt-2">
-                        <Button size="sm" onClick={() => handleEdit(book)}>
-                          Edit
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleDelete(book.id)}
+                    <div className="">
+
+                      <Card
+                        className="group hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-row"
+                      >
+                        <div
+                          className="relative w-32 flex-shrink-0"
                         >
-                          Hapus
-                        </Button>
-                      </div>
-                    </>
+                          <Image
+                            src={book.image || "/placeholder.svg"}
+                            alt={book.title}
+                            width={500}
+                            height={200}
+                            className="group-hover:scale-105 transition-transform duration-300 w-full h-full"
+
+                          />
+                          {book.bestseller && (
+                            <Badge className="absolute top-2 left-2 bg-red-500 hover:bg-red-600">
+                              Bestseller
+                            </Badge>
+                          )}
+                        </div>
+                        <CardContent
+                          className="p-4 flex-1 flex flex-col justify-between">
+                          <div className="space-y-2">
+                            <Badge variant="secondary" className="text-xs">
+                              {book.category}
+                            </Badge>
+                            <div>
+                              <h3 className="font-semibold text-slate-900 line-clamp-2 group-hover:text-amber-600 transition-colors">
+                                {book.title}
+                              </h3>
+                              <p className="text-sm text-slate-600 mt-1">
+                                {book.author}
+                              </p>
+                            </div>
+                            <p className="text-sm text-slate-600 line-clamp-2">
+                              {book.description}
+                            </p>
+                          </div>
+                          <div
+                            className="text-end mt-4 space-x-2">
+                            <Button size="sm" onClick={() => handleEdit(book)}>
+                              <PencilIcon />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleDelete(book.id)}
+                            >
+                              <Trash />
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
                   )}
                 </div>
               ))}

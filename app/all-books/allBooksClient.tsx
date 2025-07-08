@@ -46,7 +46,9 @@ export default function AllBooks() {
 
   useEffect(() => {
     const fetchBooks = async () => {
-      const { data, error } = await supabase.from("books").select("*");
+      const { data, error } = await supabase.from("books")
+        .select("*")
+        .order("id", { ascending: true });
 
       if (error) {
         console.error("Gagal mengambil data buku:", error);
@@ -170,7 +172,7 @@ export default function AllBooks() {
               <div className="text-slate-600">
                 Menampilkan {filteredBooks.length} dari {books.length} buku
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 max-lg:justify-between max-lg:w-full">
                 <Select value={sortBy} onValueChange={setSortBy}>
                   <SelectTrigger className="w-48">
                     <SelectValue />

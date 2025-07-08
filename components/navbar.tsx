@@ -22,7 +22,12 @@ import {
   Bell,
 } from "lucide-react";
 
-export function Navbar() {
+type NavbarProps = {
+  otherMenu?: React.ReactNode
+}
+
+
+export function Navbar({ otherMenu }: NavbarProps) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("")
 
@@ -39,7 +44,7 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden lg:flex items-center space-x-8">
             <Link
               href="/"
               className="text-slate-700 hover:text-amber-600 font-medium transition-colors"
@@ -157,13 +162,16 @@ export function Navbar() {
                 <DropdownMenuItem>
                   <Link href="/admin/dashboard">Admin</Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem>
+                  {otherMenu}
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
             {/* Mobile Menu */}
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden">
+                <Button variant="ghost" size="icon" className="lg:hidden">
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
@@ -175,7 +183,7 @@ export function Navbar() {
                   <Link href="/all-books" className="text-lg font-medium">
                     Semua Buku
                   </Link>
-                  <Link href="/best-sellers" className="text-lg font-medium">
+                  <Link href="/best-seller" className="text-lg font-medium">
                     Best Seller
                   </Link>
                   <div className="space-y-2">

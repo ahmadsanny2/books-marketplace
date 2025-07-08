@@ -2,7 +2,7 @@ import type React from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/navbar";
+import ClientNavbarWrapper from "@/components/ClientNavbarWrapper";
 import { Footer } from "@/components/footer";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -33,7 +33,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body className={inter.className}>
-        <Navbar />
+        <ClientNavbarWrapper />
         <main>{children}</main>
         <Footer />
       </body>
