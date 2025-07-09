@@ -9,7 +9,6 @@ import { supabase } from "@/lib/supabaseClient";
 import AdminLayout from "@/components/layouts/AdminLayout";
 import { PencilIcon, Trash } from "lucide-react";
 
-
 type Book = {
   id: string;
   title: string;
@@ -36,7 +35,10 @@ export default function ProductsPage() {
 
   const fetchBooks = async () => {
     setIsLoading(true);
-    const { data, error } = await supabase.from("books").select("*");
+    const { data, error } = await supabase
+      .from("books")
+      .select("*")
+      .order("id", { ascending: true });
 
     if (error) {
       console.error("Gagal mengambil data buku:", error);
@@ -47,20 +49,23 @@ export default function ProductsPage() {
   };
 
   const handleAdd = async () => {
-    const { data, error } = await supabase.from("books").insert([
-      {
-        title: "Judul Baru",
-        author: "Penulis Baru",
-        price: 0,
-        original_price: 0,
-        rating: 0,
-        reviews: 0,
-        image: "/placeholder.svg",
-        category: "Uncategorized",
-        bestseller: false,
-        description: "Deskripsi buku baru",
-      },
-    ]).select();
+    const { data, error } = await supabase
+      .from("books")
+      .insert([
+        {
+          title: "Judul Baru",
+          author: "Penulis Baru",
+          price: 0,
+          original_price: 0,
+          rating: 0,
+          reviews: 0,
+          image: "/placeholder.svg",
+          category: "Uncategorized",
+          bestseller: false,
+          description: "Deskripsi buku baru",
+        },
+      ])
+      .select();
 
     if (error) {
       alert("Gagal menambah buku");
@@ -90,7 +95,7 @@ export default function ProductsPage() {
     } else {
       setBooks((prev) =>
         prev.map((book) =>
-          book.id === isEditing ? { ...book, ...formData } as Book : book
+          book.id === isEditing ? ({ ...book, ...formData } as Book) : book
         )
       );
       setIsEditing(null);
@@ -114,56 +119,71 @@ export default function ProductsPage() {
 
   return (
     <AdminLayout>
-
-
       <div className="lg:p-6">
         <div className="container mx-auto px-2 lg:px-4">
           <div className="lg:flex justify-between items-center lg:mb-6">
             <h1 className="text-2xl font-bold">Manajemen Produk</h1>
-            <Button className="my-2" onClick={handleAdd}>+ Tambah Produk</Button>
+            <Button className="my-2" onClick={handleAdd}>
+              + Tambah Produk
+            </Button>
           </div>
 
           {isLoading ? (
             <p className="text-gray-500">Memuat data buku...</p>
           ) : (
-            <div className="grid md:grid-cols-2 gap-5">
+            <div className="space-y-5 gap-5">
               {books.map((book) => (
                 <div key={book.id} className="">
                   {isEditing === book.id ? (
                     <div className="space-y-2">
                       <input
                         value={formData.image || ""}
-                        onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, image: e.target.value })
+                        }
                         placeholder="Judul"
                         className="w-full p-2 border rounded"
                       />
                       <input
                         value={formData.title || ""}
-                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, title: e.target.value })
+                        }
                         placeholder="Judul"
                         className="w-full p-2 border rounded"
                       />
                       <input
                         value={formData.author || ""}
-                        onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, author: e.target.value })
+                        }
                         placeholder="Penulis"
                         className="w-full p-2 border rounded"
                       />
                       <input
                         value={formData.price || ""}
-                        onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, price: e.target.value })
+                        }
                         placeholder="Price"
                         className="w-full p-2 border rounded"
                       />
                       <input
                         value={formData.bestseller || ""}
-                        onChange={(e) => setFormData({ ...formData, bestseller: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            bestseller: e.target.value,
+                          })
+                        }
                         placeholder="Best Seller"
                         className="w-full p-2 border rounded"
                       />
                       <input
                         value={formData.category || ""}
-                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, category: e.target.value })
+                        }
                         placeholder="Best Seller"
                         className="w-full p-2 border rounded"
                       />
@@ -171,20 +191,14 @@ export default function ProductsPage() {
                     </div>
                   ) : (
                     <div className="">
-
-                      <Card
-                        className="group hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-row"
-                      >
-                        <div
-                          className="relative w-32 flex-shrink-0"
-                        >
+                      <Card className="group hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-row">
+                        <div className="relative w-32 flex-shrink-0">
                           <Image
                             src={book.image || "/placeholder.svg"}
                             alt={book.title}
                             width={500}
                             height={200}
                             className="group-hover:scale-105 transition-transform duration-300 w-full h-full"
-
                           />
                           {book.bestseller && (
                             <Badge className="absolute top-2 left-2 bg-red-500 hover:bg-red-600">
@@ -192,8 +206,7 @@ export default function ProductsPage() {
                             </Badge>
                           )}
                         </div>
-                        <CardContent
-                          className="p-4 flex-1 flex flex-col justify-between">
+                        <CardContent className="p-4 flex-1 flex flex-col justify-between">
                           <div className="space-y-2">
                             <Badge variant="secondary" className="text-xs">
                               {book.category}
@@ -210,8 +223,7 @@ export default function ProductsPage() {
                               {book.description}
                             </p>
                           </div>
-                          <div
-                            className="text-end mt-4 space-x-2">
+                          <div className="text-end mt-4 space-x-2">
                             <Button size="sm" onClick={() => handleEdit(book)}>
                               <PencilIcon />
                             </Button>

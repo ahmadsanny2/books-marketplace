@@ -6,7 +6,6 @@ import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import {
   Select,
@@ -40,13 +39,19 @@ export default function AllBooks() {
   const [priceRange, setPriceRange] = useState<string>("");
   const [sortBy, setSortBy] = useState<string>("popularity");
   const [isLoading, setIsLoading] = useState(true);
+  const slugify = (str: string) =>
+    str
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "");
 
   const searchParams = useSearchParams();
   const searchTerm = searchParams.get("q") || "";
 
   useEffect(() => {
     const fetchBooks = async () => {
-      const { data, error } = await supabase.from("books")
+      const { data, error } = await supabase
+        .from("books")
         .select("*")
         .order("id", { ascending: true });
 
@@ -62,7 +67,9 @@ export default function AllBooks() {
   }, []);
 
   // Dapatkan kategori unik dari buku
-  const uniqueCategories = Array.from(new Set(books.map((book) => book.category)));
+  const uniqueCategories = Array.from(
+    new Set(books.map((book) => book.category))
+  );
 
   const filteredBooks = books.filter((book) => {
     const matchSearch = `${book.title}`
@@ -110,17 +117,6 @@ export default function AllBooks() {
               </h3>
 
               <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-slate-700 mb-2 block">
-                    Cari Buku
-                  </label>
-                  <Input
-                    placeholder="Judul atau penulis..."
-                    value={searchTerm}
-                    readOnly
-                  />
-                </div>
-
                 <div>
                   <label className="text-sm font-medium text-slate-700 mb-3 block">
                     Kategori
@@ -179,8 +175,12 @@ export default function AllBooks() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="popularity">Paling Populer</SelectItem>
-                    <SelectItem value="price-low">Harga: Rendah ke Tinggi</SelectItem>
-                    <SelectItem value="price-high">Harga: Tinggi ke Rendah</SelectItem>
+                    <SelectItem value="price-low">
+                      Harga: Rendah ke Tinggi
+                    </SelectItem>
+                    <SelectItem value="price-high">
+                      Harga: Tinggi ke Rendah
+                    </SelectItem>
                     <SelectItem value="rating">Rating Tertinggi</SelectItem>
                     <SelectItem value="newest">Terbaru</SelectItem>
                   </SelectContent>
@@ -218,22 +218,31 @@ export default function AllBooks() {
                 }
               >
                 {filteredBooks.map((book) => (
-                  <Link key={book.id} href={`/books/${book.id}`} className="block">
+                  <Link
+                    key={book.id}
+                    href={`books/detail-book/${book.id}/${slugify(book.title)}`}
+                    className="block"
+                  >
                     <Card
-                      className={`group hover:shadow-lg transition-all duration-300 overflow-hidden ${viewMode === "list" ? "flex flex-row" : ""
-                        }`}
+                      className={`group hover:shadow-lg transition-all duration-300 overflow-hidden ${
+                        viewMode === "list" ? "flex flex-row" : ""
+                      }`}
                     >
                       <div
-                        className={`relative ${viewMode === "list" ? "w-32 flex-shrink-0" : ""
-                          }`}
+                        className={`relative ${
+                          viewMode === "list" ? "w-32 flex-shrink-0" : ""
+                        }`}
                       >
                         <Image
                           src={book.image || "/placeholder.svg"}
                           alt={book.title}
                           width={500}
                           height={viewMode === "list" ? 200 : 500}
-                          className={`group-hover:scale-105 transition-transform duration-300 ${viewMode === "list" ? "w-full h-full" : "w-full h-[500px]"
-                            }`}
+                          className={`group-hover:scale-105 transition-transform duration-300 ${
+                            viewMode === "list"
+                              ? "w-full h-full"
+                              : "w-full h-[500px]"
+                          }`}
                         />
                         {book.bestseller && (
                           <Badge className="absolute top-2 left-2 bg-red-500 hover:bg-red-600">
@@ -242,10 +251,11 @@ export default function AllBooks() {
                         )}
                       </div>
                       <CardContent
-                        className={`p-4 ${viewMode === "list"
-                          ? "flex-1 flex flex-col justify-between"
-                          : ""
-                          }`}
+                        className={`p-4 ${
+                          viewMode === "list"
+                            ? "flex-1 flex flex-col justify-between"
+                            : ""
+                        }`}
                       >
                         <div className="space-y-2">
                           <Badge variant="secondary" className="text-xs">
@@ -277,15 +287,16 @@ export default function AllBooks() {
                           </div>
                         </div>
                         <div
-                          className={`flex items-center justify-between ${viewMode === "list" ? "mt-4" : "mt-3"
-                            }`}
+                          className={`flex items-center justify-between ${
+                            viewMode === "list" ? "mt-4" : "mt-3"
+                          }`}
                         >
                           <div className="flex items-center gap-2">
                             <span className="text-lg font-bold text-slate-900">
-                              ${book.price}
+                              Rp{book.price.toLocaleString("id-ID")}
                             </span>
                             <span className="text-sm text-slate-500 line-through">
-                              ${book.original_price}
+                              Rp{book.original_price.toLocaleString("id-ID")}
                             </span>
                           </div>
                           <Button

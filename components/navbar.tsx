@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,15 +21,36 @@ import {
   Heart,
   Bell,
 } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 
 type NavbarProps = {
-  otherMenu?: React.ReactNode
-}
-
+  otherMenu?: React.ReactNode;
+};
 
 export function Navbar({ otherMenu }: NavbarProps) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("")
+  const [searchTerm, setSearchTerm] = useState("");
+  const [books, setBooks] = useState<Book[]>([]);
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      const { data, error } = await supabase
+        .from("books")
+        .select("*")
+        .order("id", { ascending: true });
+
+      if (error) {
+        console.log("Gagal mengambil data buku", error);
+      } else {
+        setBooks(data as Book[]);
+      }
+    };
+    fetchBooks();
+  }, []);
+
+  const uniqueCategories = Array.from(
+    new Set(books.map((book) => book.category))
+  ).filter(Boolean);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
@@ -56,22 +77,23 @@ export function Navbar({ otherMenu }: NavbarProps) {
                 Kategori
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem>Fiction</DropdownMenuItem>
-                <DropdownMenuItem>Non-Fiction</DropdownMenuItem>
-                <DropdownMenuItem>Science</DropdownMenuItem>
-                <DropdownMenuItem>History</DropdownMenuItem>
-                <DropdownMenuItem>Biography</DropdownMenuItem>
-                <DropdownMenuItem>Children</DropdownMenuItem>
+                {uniqueCategories.map((category, index) => (
+                  <DropdownMenuItem key={index}>
+                    <Link href={`/category/${encodeURIComponent(category)}`}>
+                      {category}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
               </DropdownMenuContent>
             </DropdownMenu>
             <Link
-              href="/all-books"
+              href="/books"
               className="text-slate-700 hover:text-amber-600 font-medium transition-colors"
             >
               Semua Buku
             </Link>
             <Link
-              href="/best-seller"
+              href="/books/best-seller"
               className="text-slate-700 hover:text-amber-600 font-medium transition-colors"
             >
               Best Seller
@@ -88,10 +110,14 @@ export function Navbar({ otherMenu }: NavbarProps) {
           <div className="hidden lg:flex items-center flex-1 max-w-sm mx-8">
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
-              <form onSubmit={(e) => {
-                e.preventDefault()
-                window.location.href = `/all-books?q=${encodeURIComponent(searchTerm)}`
-              }}>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  window.location.href = `/books?q=${encodeURIComponent(
+                    searchTerm
+                  )}`;
+                }}
+              >
                 <Input
                   placeholder="Cari buku, penulis, atau kategori..."
                   className="pl-10 pr-4 w-full"
@@ -162,9 +188,7 @@ export function Navbar({ otherMenu }: NavbarProps) {
                 <DropdownMenuItem>
                   <Link href="/admin/dashboard">Admin</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  {otherMenu}
-                </DropdownMenuItem>
+                <DropdownMenuItem>{otherMenu}</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -183,7 +207,7 @@ export function Navbar({ otherMenu }: NavbarProps) {
                   <Link href="/all-books" className="text-lg font-medium">
                     Semua Buku
                   </Link>
-                  <Link href="/best-seller" className="text-lg font-medium">
+                  <Link href="/books/best-seller" className="text-lg font-medium">
                     Best Seller
                   </Link>
                   <div className="space-y-2">
