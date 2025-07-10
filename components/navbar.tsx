@@ -21,7 +21,8 @@ import {
   Heart,
   Bell,
 } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
+import { createSupabaseBrowserClient } from '@/lib/supabaseClient';
+
 
 type NavbarProps = {
   otherMenu?: React.ReactNode;
@@ -31,6 +32,7 @@ export function Navbar({ otherMenu }: NavbarProps) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [books, setBooks] = useState<Book[]>([]);
+  const supabase = createSupabaseBrowserClient();
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -184,10 +186,6 @@ export function Navbar({ otherMenu }: NavbarProps) {
                 <DropdownMenuItem>Pesanan Saya</DropdownMenuItem>
                 <DropdownMenuItem>Wishlist</DropdownMenuItem>
                 <DropdownMenuItem>Pengaturan</DropdownMenuItem>
-                <DropdownMenuItem>Keluar</DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/admin/dashboard">Admin</Link>
-                </DropdownMenuItem>
                 <DropdownMenuItem>{otherMenu}</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

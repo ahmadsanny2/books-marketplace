@@ -8,6 +8,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, ShoppingCart } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+import { createSupabaseBrowserClient } from '@/lib/supabaseClient';
+
 
 // ✅ Tambahkan tipe Book
 export type Book = {
@@ -26,6 +28,7 @@ export type Book = {
 
 // ✅ Ubah nama komponen agar diawali huruf kapital
 export default function BestSellerPage() {
+  const supabase = createSupabaseBrowserClient();
   const [bestsellerBooks, setBestsellerBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const slugify = (str: string) =>

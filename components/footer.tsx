@@ -14,9 +14,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { createSupabaseBrowserClient } from '@/lib/supabaseClient';
+
 
 export function Footer() {
   const [books, setBooks] = useState<Book[]>([]);
+  const supabase = createSupabaseBrowserClient();
+
 
   useEffect(() => {
     const fetchBooks = async () => {

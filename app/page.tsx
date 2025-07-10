@@ -8,6 +8,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, ShoppingCart, BookOpen, Users, Award } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+import { createSupabaseBrowserClient } from '@/lib/supabaseClient';
+
+
 
 type Book = {
   id: string;
@@ -23,6 +26,7 @@ type Book = {
 };
 
 export default function HomePage() {
+  const supabase = createSupabaseBrowserClient();
   const [bestsellerBooks, setBestsellerBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [categoriesFromBooks, setCategoriesFromBooks] = useState<

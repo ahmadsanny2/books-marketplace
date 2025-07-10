@@ -17,6 +17,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Star, ShoppingCart, Filter, Grid, List } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+import { createSupabaseBrowserClient } from '@/lib/supabaseClient';
 
 export type Book = {
   id: string;
@@ -33,6 +34,7 @@ export type Book = {
 };
 
 export default function AllBooks() {
+  const supabase = createSupabaseBrowserClient();
   const [books, setBooks] = useState<Book[]>([]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -224,25 +226,22 @@ export default function AllBooks() {
                     className="block"
                   >
                     <Card
-                      className={`group hover:shadow-lg transition-all duration-300 overflow-hidden ${
-                        viewMode === "list" ? "flex flex-row" : ""
-                      }`}
+                      className={`group hover:shadow-lg transition-all duration-300 overflow-hidden ${viewMode === "list" ? "flex flex-row" : ""
+                        }`}
                     >
                       <div
-                        className={`relative ${
-                          viewMode === "list" ? "w-32 flex-shrink-0" : ""
-                        }`}
+                        className={`relative ${viewMode === "list" ? "w-44 flex-shrink-0" : ""
+                          }`}
                       >
                         <Image
                           src={book.image || "/placeholder.svg"}
                           alt={book.title}
                           width={500}
                           height={viewMode === "list" ? 200 : 500}
-                          className={`group-hover:scale-105 transition-transform duration-300 ${
-                            viewMode === "list"
+                          className={`group-hover:scale-105 transition-transform duration-300 ${viewMode === "list"
                               ? "w-full h-full"
                               : "w-full h-[500px]"
-                          }`}
+                            }`}
                         />
                         {book.bestseller && (
                           <Badge className="absolute top-2 left-2 bg-red-500 hover:bg-red-600">
@@ -251,11 +250,10 @@ export default function AllBooks() {
                         )}
                       </div>
                       <CardContent
-                        className={`p-4 ${
-                          viewMode === "list"
+                        className={`p-4 ${viewMode === "list"
                             ? "flex-1 flex flex-col justify-between"
                             : ""
-                        }`}
+                          }`}
                       >
                         <div className="space-y-2">
                           <Badge variant="secondary" className="text-xs">
@@ -287,9 +285,8 @@ export default function AllBooks() {
                           </div>
                         </div>
                         <div
-                          className={`flex items-center justify-between ${
-                            viewMode === "list" ? "mt-4" : "mt-3"
-                          }`}
+                          className={`flex items-center justify-between ${viewMode === "list" ? "mt-4" : "mt-3"
+                            }`}
                         >
                           <div className="flex items-center gap-2">
                             <span className="text-lg font-bold text-slate-900">

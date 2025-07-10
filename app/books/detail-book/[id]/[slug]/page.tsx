@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingCart, Star } from "lucide-react";
+import { createSupabaseBrowserClient } from '@/lib/supabaseClient';
 
 type Book = {
   id: string;
@@ -23,6 +24,8 @@ export default async function BookDetailPage({
 }: {
   params: { id: string };
 }) {
+
+  const supabase = createSupabaseBrowserClient();
   const { data: book, error } = await supabase
     .from("books")
     .select("*")
@@ -32,6 +35,7 @@ export default async function BookDetailPage({
   if (!book || error) {
     return notFound();
   }
+
 
   return (
     <div className="py-16 lg:py-24">
