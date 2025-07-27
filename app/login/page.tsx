@@ -28,9 +28,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form onSubmit={handleLogin} className="bg-white p-6 rounded shadow-md w-80 space-y-4">
-        <h2 className="text-2xl font-bold text-center">Login</h2>
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-100">
+      <form onSubmit={handleLogin} className="flex flex-col  items-center bg-white p-6 rounded shadow-md space-y-4 h-96">
+        <h1 className="text-2xl font-semibold text-center">Welcome</h1>
+        <p className="text-center">Enter your email and password to access your account</p>
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
         <input
